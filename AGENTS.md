@@ -1,5 +1,3 @@
-
-
 ---
 
 <!-- sebastian-software-consumer-agents:start -->
