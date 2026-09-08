@@ -24,8 +24,8 @@
     "lint": "pnpm lint:oxlint && pnpm lint:eslint",
     "lint:eslint": "eslint . --max-warnings=0",
     "lint:oxlint": "oxlint -c oxlint.config.ts",
-    "format": "oxfmt --ignore-path .oxfmtignore --write .",
-    "format:check": "oxfmt --ignore-path .oxfmtignore --check .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
     "check:standards": "standards check",
     "agent:check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:standards"
   },
