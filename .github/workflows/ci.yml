@@ -1,5 +1,3 @@
-# Standalone for now — will be replaced by a stub calling the reusable
-# workflow from sebastian-software/.github once that repository exists.
 name: CI
 
 on:
@@ -7,9 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check:
+  ci:
+    name: CI / Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v4
@@ -18,8 +25,24 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm check:ci
+
+  standards:
+    name: Standards / Consistency
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The pinned CLI predates `standards ci`. Keep these guards until
+      # the standards 16 migration updates the CLI and consolidates them.
       - name: "Guard: agent step not yet completed for this PR"
-        run: test ! -f .standards/pending.json
+        run: test ! -e .standards/pending.json && test ! -L .standards/pending.json
       - name: "Guard: no blocking agent findings for this PR"
         run: |
           node -e "
@@ -60,4 +83,18 @@ jobs:
           }
           'standards CLI and repository stamp are aligned at version ' + meta.standards
           "
-      - run: pnpm agent:check
+      - run: pnpm check:standards
+
+  # Existing branch protection requires this context. Remove it only after
+  # protection requires both named lanes above (see docs/maintenance.md).
+  check:
+    if: ${{ always() }}
+    needs: [ci, standards]
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Require both lanes to pass
+        env:
+          CODE_RESULT: ${{ needs.ci.result }}
+          STANDARDS_RESULT: ${{ needs.standards.result }}
+        run: test "$CODE_RESULT" = success && test "$STANDARDS_RESULT" = success
