@@ -5,45 +5,53 @@
 [![Powered by Sebastian Software](https://img.shields.io/badge/Powered_by-Sebastian_Software-005164?style=flat)](https://oss.sebastian-software.com) [![CI](https://github.com/sebastian-software/repo-template/actions/workflows/ci.yml/badge.svg)](https://github.com/sebastian-software/repo-template/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A starting point for Sebastian Software repositories, with shared linting,
-formatting, CI, and a generated README.
+A small starting point for Sebastian Software Node.js repositories: shared
+linting, formatting, TypeScript configuration, CI and Renovate policy.
+It contains no application code. Add packages under `packages/` as needed.
 
 ## Start a project
 
-Use GitHub's **Use this template** action to create a repository, then clone it.
-Replace `repo-template` in the package metadata and the badge URLs in
-`README.md.src`. Write your project's introduction, installation steps, and a
-small usage example in that source file.
+1. Select **Use this template** on GitHub, create your repository, and clone it.
+2. Install Node.js 24 or newer. Use the pnpm version in `package.json#packageManager`.
+3. Install dependencies and check the starting point:
 
-Install the contributor tools as described in [README setup](docs/readme-theme.md),
-then regenerate `README.md`. The source, CLI pin, and shared theme configuration
-are copied into each new repository so it can maintain them independently.
+   ```sh
+   pnpm install --frozen-lockfile
+   pnpm agent:check
+   ```
 
-## Development
+4. Follow [the setup checklist](docs/getting-started.md) to rename the project,
+   write its README and enable repository automation.
 
-Source code lives in `packages/<name>`, documentation (built with
-[ardo](https://github.com/sebastian-software/ardo)) in `docs/`.
+## Everyday commands
 
-```bash
-pnpm install
-pnpm agent:check   # lint + format + typecheck + build + test
-```
+| Command | Purpose |
+| --- | --- |
+| `pnpm agent:check` | Full local gate: code checks and standards consistency |
+| `pnpm check:ci` | Lint, formatting, typecheck, build and tests |
+| `pnpm check:standards` | Compare repository configuration with the pinned standards CLI |
+| `pnpm format` | Format supported files with oxfmt |
+| `mise run readme:write` | Generate this README after editing `README.md.src` |
 
-| Script        | What it does                                        |
-| ------------- | --------------------------------------------------- |
-| `pnpm lint`   | OxLint first (fast), then ESLint (deep, type-aware) |
-| `pnpm format` | Format everything with oxfmt                        |
-| `pnpm build`  | Build all workspace packages                        |
-| `pnpm test`   | Test all workspace packages                         |
+The root build and test commands delegate to workspace packages. Until a
+package exists, they have no application code to build or test. The root
+typecheck still checks the tool configuration.
+
+## Find your way around
+
+- [Getting started](docs/getting-started.md): project identity, first package and repository settings.
+- [Maintenance](docs/maintenance.md): file ownership, CI checks and dependency updates.
+- [README tooling](docs/readme-theme.md): install the pinned generator and update its output.
+- [Standards](https://github.com/sebastian-software/standards): shared configuration and migrations.
+- [Renovate policy](https://github.com/sebastian-software/renovate-config): dependency and standards rollout presets.
+
+`docs/` contains Markdown documentation; no documentation site or framework is
+installed. Replace this template introduction with your project's purpose,
+installation steps and a small usage example.
 
 ## License
 
 [MIT](LICENSE)
-
-## Maintaining this README
-
-Edit `README.md.src`, then run `mise run readme:write`.
-See [README setup and checks](docs/readme-theme.md) for the contributor workflow.
 
 ---
 

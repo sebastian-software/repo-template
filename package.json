@@ -27,7 +27,8 @@
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "check:standards": "standards check",
-    "agent:check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test && pnpm check:standards"
+    "agent:check": "pnpm check:ci && pnpm check:standards",
+    "check:ci": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm build && pnpm test"
   },
   "devDependencies": {
     "@sebastian-software/standards": "0.11.1",
